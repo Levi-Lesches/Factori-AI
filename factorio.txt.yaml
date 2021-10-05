@@ -1,0 +1,536 @@
+priorities: 
+  0: infrastructure
+  1: science (generally to keep the factory running)
+  2: small intermediate
+  3: medium intermediate
+  4: large intermediate
+
+Some formulas: 
+  u = pfc/r
+  f = ur/pc
+  c = ur/pf
+
+Target production: 100SPM (u = 1.6 / s)
+  labs: 1SPM --> labs = u / c = 100 / 2.45 = 40 labs
+    productivity bonus: 1.2 * 40 * 2.45 = 117.5 SPM -  bonus = +17.5 SPM
+
+BEGIN
+
+# Sciences
+
+Automation science: 
+  r = 1 gear + 1 copper + 5 sec
+  c = 3 --> f = 2
+  ingredients: u = fc/r = 6/5 = 1.2
+    gears: 2 iron + 0.5 sec
+      f = 1 --> c = 0.5
+      iron: u = fc/r = 0.5/0.5 = 1
+  imports: priority 3
+    copper: 1.2 / sec
+    iron: (2 * 1 gear) = 2 / sec
+
+Logistic science: 
+  r = 1 inserter + 1 belt + 6 sec
+  c = 3.625 (top and sides) --> f = 2
+  ingredients: u = 1.6 / 1.4 = ~1.2
+    inserter (no prod): 1 green chip + 1 gear + 1 iron + 0.5 sec
+      f = 1 --> c = 0.6 --> asm2
+      ingredients: u = 1.2
+    transport belt: 1 gear + 1 iron + 0.5 sec
+      f = 1 --> c = 0.6 --> asm2
+      ingredients: u = 1.2
+    gears: 2 iron + 0.5 sec
+      u = (1.2 * 1 inserter) + (1.2 * 1 transport belt) = 2.4
+      f = 1 --> c = 0.8
+      iron: u = fc/r = 0.8/0.5 = 1.7
+  imports: priority 3
+    green chips: (1.2 * 1 inserter) = 1.2 / sec
+    iron: (1 * 1.2 inserter) + (1 * 1.2 transport belt) + (2 * 1.6 gears) = 5.6 / sec
+
+Chemical science: 
+  2r = 1 sulfur + 3 advanced circuits + 2 engine units + 24 sec
+  u = 1.6/2 packs / recipe = 0.8
+  c = 5.5 --> f = 3
+  ingredients: u = 0.8 / 1.4 = 0.6
+    engine: 1 steel + 1 gear + 2 pipe + 10 sec
+      u = 0.6 * 2 = 1.2
+      c = 3, f = 2.85
+      ingredients: u = 1.2 / 1.4 = 0.85
+        gear: 2 iron + 0.5 sec
+          c = 3 --> f = 0.1 (T_T)
+          ingredients: u = 0.85 / 1.4 = 0.6
+        pipe: 1 iron + 0.5 sec
+          u = 0.85 * 2 = 1.7
+          f = 1 --> c = 0.85
+          ingredients: u = 1.7
+  imports: priority 3
+    sulfur: 0.6 sulfur / sec
+    red chips: 0.6 * 3 = 1.8 / sec
+    iron: (2 * 0,6 gear) + (1 * 1.7 pipe) = 2.9 / sec
+    steel: (1 * 0.85 engine) = 0.85 / sec
+
+Production science: 
+  3r = 30 rails(!) + 1 electric furnace + 1 productivity module + 21 sec
+  u = 1.6 / 3 pack = 0.53
+  f = 3 --> c = 2.66
+  c = 5.5 --> f = 1.45
+  ingredients: u = 0.53 / 1.4 = 0.38
+    productivity modules (no prod): 5 green chips + 5 red chips + 15 sec
+      f = 2 --> c = 2.85 (asm3 w/3 speed = 3.125)
+      ingredients: u = 0.38
+        green chips: 5 * 38 = 1.9
+        red chips: 5 * 0.416 = 1.9
+    electric furnace (no prod): 10 steel + 10 brick + 5 red chips + 5 sec
+      f = 1 --> c = 1.9 (asm3 w/2 speed = 2.5)
+      ingredients: u = 0.38
+        steel: 0.38 * 10 = 3.8
+        brick: 0.38 * 10 = 3.8
+        0.38 * 5 = 1.9
+  imports: priority 3
+    rails: (0.38 * 30 rails) = 11.4 / sec
+    green chips: (5 * 0.38 productivity module) = 1.9 / sec
+    red chips: (5 * 0.38 productivity modules) + (5 * 0.38 electric furnaces) = 3.8 / sec
+    steel: (10 * 0.38 electric furnaces) = 3.8 / sec
+    brick: (10 * 0.38 electric furnaces) = 3.8 / sec
+
+Utility science: 
+  3r = 2 processing units + 1 robot frame + 3 low density structures + 21 sec
+  u = 1.6 / 3 pack = 0.53
+  c = 5.5 --> f = 1.45
+  ingredients: u = 0.53 / 1.4 = 0.38
+    robot frames: 1 steel + 2 battery + 3 green chips + 1 electric engine + 20 sec
+      c = 3 --> f = 1.8
+      ingredients: u = 0.38 / 1.4 = 0.28
+        electric engine: 2 green chips + 1 engine + 20 lube + 10 sec
+          c = 3 --> f = 1.26
+          ingredients: u = 0.28 / 1.4 = 0.2
+            engine: 1 steel + 1 gear + 2 pipe + 10 sec
+              c = 3 --> f = 0.5
+              ingredients: u = 0.2 / 1.4 = 0.15
+                gear: 2 iron + 0.5 sec
+                  f = 1 --> c = 0.05
+                  ingredients: u = 0.15 / 1.4 = 0.1
+                pipe (no prod): 1 iron + 0.5 sec
+                  f = 1 --> c = 0.05
+                  ingredients: u = 0.15
+  imports (two trains): priority 3
+    steel: (1 * 0.28 robot frame) + (1 * 0.15 engine) = 0.43 / sec
+    green chips: (3 * 0.28 robot frame) + (2 * 0.2 electric engine) = 1.25 / sec
+    iron: (2 * 0.1 gear) + (1 * 0.15 pipe) = 0.35
+    lube: (20 * 0.2 electric engine) = 4 / sec
+    purple chips: (2 * 0.38 yellow science) = 0.76 / sec
+    LDS: (3 * 0.38 yellow science) = 1.15 / sec
+    battery: (2 * 0.28 robot frame) = .56 / sec
+
+Space science:
+  1000r = 100 rocket parts + 1 satellite + 40 sec (animation)
+  ingredients:  u = 1.6 / 1000 packs per launch = 0.0016
+    rocket parts: 10 rocket control units + 10 LDS + 10 rocket fuel + 3 sec
+      f = 1 -> c < 0.4 (asm3 w/o beacons)
+      ingredients: u = 0.0016 * 100 / 1.4 = 0.12
+        rocket control units: 1 processing unit + 1 speed module I + 30 sec
+          c = 5.5 --> f = 4.67
+          ingredients: u = 0.12 * 10 / 1.4 = 0.86
+            speed module I: 5 green chips + 5 red chips + 15 sec
+              c = 3 --> f = 3
+    satellite: 100 purple chip + 100 LDS + 50 rocket fuel + 100 solar panel + 100 accumulator + 5 radar + 5 sec
+      f = 1 --> c = 0.008
+       ingredients: u = 0.0016 
+        radar: 10 iron + 5 gear + 5 green chips + 0.5 sec
+          f = 1 --> c = ~0
+          ingredients: u = 5 * 0.0016 = 0.008
+            gear: 2 iron + 0.5 sec
+              ingredients: 5 * 0.008 / 1.4 = 0.028
+              f = 1 --> c = 0.014
+  imports (two trains): priority 3
+    iron: (10 * 0.008 radar) + (2 * 0.028 gear) = 0.136 / sec
+    green chips: (5 * 0.86 speed module I) + (5 * 0.008 radar) = 4.34 / sec
+    red chips: (5 * 0.86 speed module I) = 4.3 / sec
+    purple chips: (1 * 0.86 rocket control units) + (100 * 0.0016 satellite) = 1 / sec
+    LDS: (10 * 0.12 rocket parts) + (100 * 0.0016 satellite) = 1.36 / sec
+    rocket fuel: (10 * 0.12 rocket parts) + (50 * 0.0016 satellite) = 1.28 / sec
+    solar panel: (100 * 0.0016 satellite) = 0.16 / sec
+    accumulator: (100 * 0.0016 satellite) = 0.16 / sec
+
+labs: 
+  100SPM --> 40 labs 
+  imports: priority 1
+    automation science
+    Logistic science
+    Chemical science
+    Production science
+    Utility science
+    Space science
+
+# TODO
+# Intermediates
+
+LDS: 
+  # Utility science + Space science = 1.15 + 1.36 = 2.5 / sec
+  u = 2.5
+  r = 20 copper + 2 steel + 5 plastic + 20 sec
+  c = 5.5 --> f = 6.5
+  ingredients: u = 2.5 / 1.4 = 1.78
+  imports: priority 3
+    copper: 20 * 1.78 = 35.6 / sec
+    steel: 2 * 1.78 = 3.56 / sec
+    plastic: 5 * 1.78 = 8.9 / sec
+
+# Dedicated solar panel facility
+solar farm: 
+  # Space science + expansion
+  production: u = 0.2
+    solar panel: 
+      r = 5 copper plate + 5 steel plate + 15 green chip + 10 sec
+      f = 1 --> c = 2
+      ingredients: u = 0.2
+        copper plate: 5 * 0.2 = 1 / sec
+        steel plate: 5 * 0.2 = 1 / sec
+        green chip: 15 * 0.2 = 3 / sec
+    accumulator: 
+      r = 2 iron + 5 battery + 10 sec
+      f = 1 --> c = 2
+      ingredients: u = 0.2
+        iron: 2 * 0.2 = 0.4 / sec
+        battery: 5 * 0.2 = 1 / sec
+  imports: priority 2
+    iron: 0.4 / sec (24 / min)
+    copper: 1 / sec (60 / min)
+    steel: 1 / sec (60 / min)
+    battery: 1 / sec (60 / min)
+    green chips: 3 / sec (180 / min)
+
+battery: 
+  # solar farm + utility science
+  imports: priority 2
+    iron
+    copper
+    sulfuric acid
+
+# Dedicated rails facility
+infrastructure: 
+  products: 
+    # 11.4 + expansion = 15 / second
+    rails
+    landfill 
+    cliff explosives
+  ingredients:
+    rails (no prod): 1 stone + 1 iron rod + 1 steel + 0.5 sec = 2 rail
+      c = 3.75 --> f = 1
+      ingredients: u = 7.5
+        stone: 7.5 / sec
+        steel: 7.5 / sec
+        iron rod: 1 iron + 0.5 sec = 2 iron rod
+          c = 3 --> f = 1
+          ingredients: u = fc/r = 8.4
+            iron: 8.4 / sec
+    landfill (no prod): 20 stone + 0.5 sec
+      ingredients: u = 1
+        stone: 10 / sec
+    cliff explosives (no prod): 10 explosives + 1 empty barrel + 1 grenade + 8 sec
+      ingredients: stockpile, f = 1
+        explosives: 1 coal + 1 sulfur + 10 water + 4 sec
+          ingredients: 
+            coal: stockpile 
+            sulfur: stockpile
+            water: stockpile
+  imports: priority 0
+    stone: rail + landfill = (7.5 / sec) + (10 / sec) = 17.5 / sec ()
+    iron: rail = 8.4 / sec
+    steel: rail = 7.5 / sec
+
+    coal: stockpile
+    sulfur: stockpile
+    water: stockpile
+
+purple chips: 
+  # Expansion + Space science + Utility science = 1 + 0.76 = 2 / sec
+  r = 20 green chip + 2 red chip + 5 sulfuric acid + 10 sec
+  f = 3 assembling machines --> c = 4.76 crafting speed
+  ingredients: u = 2 / sec
+  imports: priority 2
+    sulfuric acid: 7.14 / sec
+    green chips: 28.57 / sec
+    red chips: 2.85 / sec
+
+red chips: 
+  # expansion + chemical science + production science + purple chips + space science
+  recipe: 2 plastic + 4 copper cable + 2 green chip + 6 sec
+  u = 1.8 + 3.8 + 4.3 + 2.85 = 12.75
+  c = 5.5 --> f = 10
+  ingredients: u = 12.75/1.4 = 9.1
+    plastic: 2 * 9.1 = 18.2 / sec
+    green chip: 2 * 9.1 = 18.2 / sec
+    copper cable: 4 * 9.1 = 36.4
+      2r = 1 copper plate + 0.5 sec
+      f = 2 --> c = 3.25
+      ingredients: u = (36.4/2)/1.4 = 13
+        copper plate: 13 / sec
+  imports: priority 3
+    plastic: 18.2 / sec
+    copper: 13 / sec
+    green chips: 18.2 / sec
+
+green chips: 
+  # Advanced circuit + Processing unit + expansion + Solar farm
+  #   + Utility science + Logistic science + production science + Space science 
+  # = 18.2 + 28.57 + 3 + 1.25 + 1.2 + 1.9 + 4.34
+  u = 58.46
+  r = 1 iron + 3 copper cable + 0.5 sec 
+  c = 5.5 --> f = 4
+  ingredients: u' = u/1.4 = 58.46/1.4 = 41.76
+    iron: 41.76 / sec
+    copper cable: 
+      2r = 1 copper + 0.5 sec
+      ingredients: u = (41.76/2)/1.4 = 15
+        copper: 15 / sec
+  imports: priority 4
+    iron: 41.76 / sec (2505 / min)
+    copper: 15 / sec (900 / min)
+
+Coal liquefaction:
+  # Needs to take care of all plastic needs -- LDS + Red chip
+  production: 
+    prod = 1.3 for all recipes
+    plastic: 
+      1 coal + 20 petroleum + 1 sec = 2 plastic
+      r = 0.5 sec
+      # LDS (8.9 / sec) + red chips (18.2 / sec) = 27.1
+      u = 28
+      c = 4.55 --> f = 3
+      ingredients: u = 28/1.3 = 21.5
+        coal: 21.5 / sec
+        petroleum: 20 * 21.5 = 430 / sec
+    petroleum (coal liquefaction) -- 1 oil refinery: 
+      10 coal + 25 heavy oil + 50 steam + 5 sec = 10 petroleum + 90 heavy oil + 20 light oil
+      c = 8.55 --> t = r/c = 0.5 sec per recipe.
+      products: u = 1.3fc/r = 2.22
+        heavy oil: (2.22 * 90) - (1.71 * 25) = 157 heavy oil / sec
+        light oil: 2.22 * 20 * 44.4 light oil / sec
+        petroleum: 2.22 * 10 = 22.2 petroleum / sec
+      ingredients: u = fc/r = 1.71
+        coal: 10 * 1.71 = 17.1
+        heavy oil: 25 * 1.71 = 42.75
+        steam: 
+          r = 1 water + 1/60 sec
+          c = 1 --> f = 2
+          ingredients: u = 1.71 * 50 = 85.5
+            water: 85.5 / sec
+    heavy oil cracking: 
+      30 water + 40 heavy oil + 2 sec = 30 light oil
+      We need to consume 157 heavy oil / sec. That's u = 4
+      f = 2 --> c = 4. Do not count the prod bonus here
+      products: Count the prod bonus here instead
+        light oil: 30 * 4 * 1.3 = 156 light oil / sec
+      ingredients: u = 4
+        water: 30 * 4 = 120 / sec
+        heavy oil: 40 * 4 = 160 / sec
+    light oil cracking: 
+      30 water + 30 light oil + 2 sec = 20 petroleum
+      We need to consume (44.4 + 156) = 200 light oil / sec. That's u = 6.66
+      c = 4.55 --> f = 3. Do not count the prod bonus here
+      products: Count the prod bonus here instead
+        petroleum: 20 * 6.66 * 1.3 = 173.16 petroleum / sec
+      ingredients: u = 6.66
+        water: 30 * 6.66 = 200 / sec
+        light oil: 30 * 6.66 = 200 / sec
+      Net petroleum for f = 1 coal liquefaction: 173.16 + 22.2 = 195 / sec
+        For u = 430 --> f = 3
+  imports: priority 3
+    coal: 3 * (17.1 [coal liquefaction]) + 21.5 [plastic] = 72.8 / sec (2.316 / min)
+    water: 85.5 [steam] + 120 [heavy oil cracking] + 200 [light oil cracking] = 405 / sec (24,330 / min)
+
+# Raw materials
+
+Oil processing: 
+  # plastic are being handled in coal liquefaction
+  exports (2 export stations: 1 solids, 1 liquids
+    # solid fuel (rocket fuel) (solid station, 1/2 bottom row)
+    # sulfur (solid station, 1/2 bottom row)
+    # sulfuric acid (liquids station #1)
+    lube (liquids station #2)
+    light oil
+    # petroleum
+    # water
+  imports: priority 3
+    iron
+    coal
+    crude oil
+    water
+
+iron: 
+  imports: priority 4
+
+copper: 
+  imports: priority 4
+
+steel: 
+  imports: priority 4
+
+# Don't need to analyze these, one-time only
+
+nuclear: 
+  imports: priority 1
+    iron
+    rocket fuel
+    sulfuric acid
+
+Modules + Beacons: 
+  speed module III: 
+    r = 5 red chip + 5 purple chip + 5 speed module II + 60 sec
+    f = 1 --> c = 1
+    ingredients: u = 1 / 60 sec
+      red chip: 5 * (1/60) = 0.08
+      purple chip: 5 * (1/60) = 0.08
+      speed module II: 
+        r = 5 red chip + 5 purple chip + 4 speed module I + 30 sec
+        f = 1 --> c = 2.4
+        ingredients: u = 5 * (1/60) = 0/08
+          red chip: 5 * 0.08 = 0.4
+          purple chip: 5 * 0.08 = 0.4
+          speed module I:
+            r = 5 green chip + 5 red chip + 15 sec
+            f = 2 --> c = 2.4
+            ingredients: u = 4 * 0.08 = 0.32
+              green chip: 5 * 0.32 = 1.6
+              red chip: 5 * 0.32 = 1.6
+  prod module III: same as speed module III
+  beacon: 
+    r = 10 steel + 10 copper cable + 20 green chip + 20 red chip + 15 sec
+    f = 1 --> c = 0.5
+    ingredients: u = 1 / 30 sec
+      steel plate: 10 * 1/30 = 1/3
+      green chip: 20 * 1/30 = 2/3
+      red chip: 20 * 1/30 = 2/3
+      copper cable: 
+        u = 10 * 1/30 = 1/3
+        2r = 1 copper plate + 0.5 sec
+        r = 0.25 sec
+        u' = u/2 = 1/6
+        f = 1 --> c = 0.05
+        ingredients: u = 1/6 / 1.4 = 0.12
+          copper: 1 * 0.12 = 0.12
+  imports: priority 0
+    green chips: (1.6 / sec [speed module I]) + (1.6 / sec [prod module I]) + (0.6 / sec [beacon]) = 3.8 / sec (230 / min)
+    red chips: 2 * (0.08 [module III] + 0.4 [module II] + 1.6 [module I]) + (0.6 [beacon]) = 4.76 / sec (285 / min)
+    purple chips: 2 * (0.08 [module III] + 0.4 [module II]) = 1 / sec (60 / min)
+    steel: 1/3 [beacon] = 0.33 / sec (20 / min)
+    copper: 0.12 [beacon] = 0.12 / sec (7.2 / min)
+
+Hub: 
+  production: 
+    signals: 
+      imports: 
+        iron 
+        green chips
+    electric poles: 
+      imports: 
+        iron
+        copper
+        steel
+    lights: 
+      imports: 
+        iron + green chips
+    inserters: 
+      iron
+      green chips
+      red chips
+    belts: 
+      imports:
+        iron 
+        copper
+        lube
+    robots: 
+      imports: 
+        green chips
+        red chips
+        steel
+        iron
+    pipes: 
+      imports: 
+        iron
+        steel
+    cables: 
+      imports:
+        copper
+        green chips
+    radars: 
+      imports: 
+        green chips
+        iron
+    asm: 
+      imports: 
+        iron
+        green chips
+        red chips
+        steel
+    trains: 
+      steel
+      green chips
+      iron
+    raw resources:
+      manufacture:
+        copper cable
+        engine
+        gear
+      import:
+        chip
+        red chip
+        purple chip
+        battery
+        plastic
+        modules
+        landfill
+        cliff explosives
+  imports: priority 0
+    iron
+    copper
+    steel
+    green chips
+    red chips
+    lube
+
+brick + concrete: 
+  imports: priority 3
+    stone
+    water
+    iron ore
+
+END
+
+Full list of production cells: 32 -- 8x4
+  LDS: (1.36 space science) + (1.15 yellow science) = ()
+  green chip: (1.2 green science) + (1.9 purple science) + (1.25 yellow science) + (4.34 space science)
+  red chip: (1.8 blue science) + (3.8 purple science) + (4.3 space science)
+  purple chip: (1 space science) + (0.76 yellow science) + surplus
+  solar farm: surplus
+    solar panel: (0.16 space science)
+    accumulator: (0.16 space science)
+  battery: (0.56 yellow science)
+  hub: 1 batch every 10 minutes
+  nuclear: 
+    - nuclear fuel: surplus
+    - uranium fuel cell: TODO
+  oil processing:
+    - sulfur: (0.6 blue science)
+    - lube: (4 yellow science) + surplus for mall
+    - rocket fuel: (1.28 space science) + surplus for nuclear fuel
+  coal liquefaction: 
+    - plastic: (8.9 LDS)
+  iron: (2 red science) + (5.6 green science) + (2.9 blue science) + (0.35 yellow science) + 0.136 space science) + steel + surplus
+  copper: (1.2 red science) + (35.6 LDS)
+  steel: (0.85 blue science) + (3.8 purple science) + (0.43 yellow science) + (3.56 LDS) + surplus
+  landfill: surplus
+  rail: (11.4 purple science) + surplus
+  stone brick: (3.8 purple science) 
+    - concrete: surplus
+  modules (100 of each) + beacons (50): 1 batch every 10 minutes
+  science * 6
+  labs
+  outposts * 4
+
+Blueprint books:
+  - Sciences 100SPM:
+    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
+  - Rail System:
+    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
